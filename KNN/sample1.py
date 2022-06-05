@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def create_data_set() -> tuple:
@@ -50,3 +51,6 @@ if __name__ == '__main__':
     k = 3
     result = classify(test, group, labels, k)
     print(result)
+    plt.scatter(group[:, 0:1], group[:, 1:2])
+    plt.scatter(x=test[0], y=test[1], c='red')
+    plt.show()
