@@ -126,7 +126,109 @@ def show_data(dating_matrix: np.ndarray, dating_labels: list) -> None:
     plt.show()
 
 
-if __name__ == '__main__':
+def show_data_test():
     filename = './sample2-data-set.txt'
     dating_matrix, dating_labels = file2matrix(filename)
     show_data(dating_matrix, dating_labels)
+
+
+def auto_norm(data_set: np.ndarray) -> tuple:
+    """
+    函数说明：对数据进行归一化
+    :param data_set - 特征矩阵
+    :return:
+        norm_data_set - 归一化后的特征矩阵
+        ranges - 数据范围
+        min_vals - 数据最小值
+    """
+    # 获得每列的最小值
+    min_vals = data_set.min(0, initial=None)
+    # 获得每列的最大值
+    max_vals = data_set.max(0, initial=None)
+    # 每列最大值和最小值的范围
+    ranges = max_vals - min_vals
+    # 返回 data_set 的行数
+    m = data_set.shape[0]
+    # 原始值减去最小值
+    norm_data_set = data_set - np.tile(min_vals, (m, 1))
+    # 除以最大和最小值的差, 得到归一化数据
+    norm_data_set = norm_data_set / np.tile(ranges, (m, 1))
+    return norm_data_set, ranges, min_vals
+
+
+def auto_norm_test():
+    filename = './sample2-data-set.txt'
+    dating_matrix, dating_labels = file2matrix(filename)
+    norm_data_set, ranges, min_vals = auto_norm(dating_matrix)
+    print(f'norm_data_set = {norm_data_set}')
+    print(f'ranges = {ranges}')
+    print(f'min_vals = {min_vals}')
+
+
+def classify(in_x, data_set: np.ndarray, labels, k):
+    """
+    函数说明: KNN 算法, 分类器
+    :param in_x: 用于分类的数据（测试集）
+    :param data_set: 用于训练的数据（训练集）
+    :param labels: 分类标签
+    :param k: KNN 算法参数, 选择距离最小的 k 个点
+    :return: sortedClassCount[0][0] - 分类结果
+    """
+    # numpy.array 数组的行数
+    data_set_size = data_set.shape[0]
+    # in_x 横向复制一次, 纵向重复 data_set_size 次。然后进行矩阵减法
+    diff_mat = np.tile(in_x, (data_set_size, 1)) - data_set
+    # 数组中的每个数都取平方
+    sq_diff_mat = diff_mat ** 2
+    # 每一行的元素相加, 得到一维数组
+    sq_distances = sq_diff_mat.sum(axis=1)
+    # 开方计算距离
+    distances = sq_distances ** 0.5
+    # 返回 distances 中元素从小到大排列后的索引
+    sorted_distance_indices = distances.argsort()
+    # 定义一个记录类别次数的字典
+    class_count = {}
+
+    # 取出前 k 个元素的类别
+    for i in range(k):
+        vote_i_label = labels[sorted_distance_indices[i]]
+        class_count[vote_i_label] = class_count.get(vote_i_label, 0) + 1
+    # 对字典进行排序（降序）=> 返回格式：[('动作片', 2), ('爱情片', 1)]
+    sorted_class_count = sorted(class_count.items(), key=lambda a: a[1], reverse=True)
+    return sorted_class_count[0][0]
+
+
+def dating_class_test():
+    """
+    函数说明: 分类器测试函数
+    :return: None
+    """
+    # 打开的文件名
+    filename = './sample2-data-set.txt'
+    # 将返回的特征矩阵和分类向量分别存储到 dating_matrix 和 dating_labels 中
+    dating_matrix, dating_labels = file2matrix(filename)
+    # 取所有数据的百分之十
+    ratio = 0.10
+    # 数据归一化,返回归一化后的矩阵,数据范围,数据最小值
+    norm_data_matrix, ranges, min_vals = auto_norm(dating_matrix)
+    # 获得 norm_data_matrix 的行数
+    m = norm_data_matrix.shape[0]
+    # 百分之十的测试数据的个数
+    num_of_test = int(m * ratio)
+    # 分类错误计数
+    error_cnt = 0.0
+    # KNN 算法参数, 选择距离最小的 k 个点
+    k = 4
+    for i in range(num_of_test):
+        # 前 num_of_test 个数据作为测试集,后 (m - num_of_test) 个数据作为训练集
+        result = classify(norm_data_matrix[i, :], norm_data_matrix[num_of_test:m, :],
+                          dating_labels[num_of_test:m], k)
+        print(f'i: {i}, 分类结果: {result}, 真实结果: {dating_labels[i]}')
+        if result != dating_labels[i]:
+            error_cnt += 1.0
+    print(f'错误率: {error_cnt / float(num_of_test) * 100} %')
+
+
+if __name__ == '__main__':
+    dating_class_test()
+
