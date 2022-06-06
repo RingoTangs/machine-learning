@@ -3,6 +3,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+
 
 def create_data_set() -> tuple:
     # 四组二维特征
@@ -53,4 +56,5 @@ if __name__ == '__main__':
     print(result)
     plt.scatter(group[:, 0:1], group[:, 1:2])
     plt.scatter(x=test[0], y=test[1], c='red')
+    plt.title(u'散点图', color='red')
     plt.show()
