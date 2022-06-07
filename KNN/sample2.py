@@ -229,6 +229,32 @@ def dating_class_test():
     print(f'错误率: {error_cnt / float(num_of_test) * 100} %')
 
 
-if __name__ == '__main__':
-    dating_class_test()
+def classify_person():
+    """
+    函数说明: 通过输入一个人的三维特征,进行分类输出
+    :return: None
+    """
+    # 输出结果
+    result_list = ['讨厌', '有些喜欢', '非常喜欢']
+    # 三维特征用户输入
+    percent_tats = float(input("玩视频游戏所耗时间百分比(0.0 - 1.0):"))
+    ff_miles = float(input("每年获得的飞行常客里程数(>= 0):"))
+    icecream = float(input("每周消费的冰激淋公升数(>= 0):"))
+    # 打开的文件名
+    filename = './sample2-data-set.txt'
+    # 打开并处理数据
+    dating_set, dating_labels = file2matrix(filename)
+    # 训练集归一化
+    norm_data_set, ranges, min_vals = auto_norm(dating_set)
+    # 生成 NumPy 数组, 测试集
+    in_arr = np.array([ff_miles, percent_tats, icecream])
+    # 测试集归一化
+    norm_in_arr = (in_arr - min_vals) / ranges
+    # 返回分类结果
+    result = classify(norm_in_arr, norm_data_set, dating_labels, 3)
+    # 打印结果
+    print(f'你可能【{result_list[result - 1]}】这个人')
 
+
+if __name__ == '__main__':
+    classify_person()
