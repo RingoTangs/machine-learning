@@ -237,7 +237,7 @@ def classify_person():
     # 输出结果
     result_list = ['讨厌', '有些喜欢', '非常喜欢']
     # 三维特征用户输入
-    percent_tats = float(input("玩视频游戏所耗时间百分比(0.0 - 1.0):"))
+    percent_tats = float(input("玩视频游戏所耗时间百分比(0.0 - 100.0):"))
     ff_miles = float(input("每年获得的飞行常客里程数(>= 0):"))
     icecream = float(input("每周消费的冰激淋公升数(>= 0):"))
     # 打开的文件名
