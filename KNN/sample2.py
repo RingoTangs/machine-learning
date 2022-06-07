@@ -65,6 +65,13 @@ def file2matrix(filename: str) -> tuple:
     return dating_matrix, dating_labels
 
 
+def file2matrix_test():
+    filename = './sample2-data-set.txt'
+    dating_matrix, dating_labels = file2matrix(filename)
+    print(f'dating_matrix: {dating_matrix}')
+    print(f'dating_labels: {dating_labels}')
+
+
 def show_data(dating_matrix: np.ndarray, dating_labels: list) -> None:
     """
     函数说明: 数据可视化
