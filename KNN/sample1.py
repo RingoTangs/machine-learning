@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.lines as mlines
 
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
 plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
@@ -48,13 +49,22 @@ def classify(in_x, data_set: np.ndarray, labels, k):
     return sorted_class_count[0][0]
 
 
+def show_data(test_data: list, data_matrix: np.ndarray):
+    plt.scatter(x=data_matrix[:, 0:1], y=data_matrix[:, 1:2], c='skyblue')
+    plt.scatter(x=test_data[0], y=test_data[1], c='red')
+    plt.title(u'电影打斗镜头和镜头次数散点图', color='red')
+    plt.xlabel(u'打斗镜头次数')
+    plt.ylabel(u'接吻镜头次数')
+    sample1 = mlines.Line2D([], [], color='skyblue', marker='.', markersize=6, label='训练样本')
+    sample2 = mlines.Line2D([], [], color='red', marker='.', markersize=6, label='测试样本')
+    plt.legend(handles=[sample1, sample2])
+    plt.show()
+
+
 if __name__ == '__main__':
     test = [101, 20]
     group, labels = create_data_set()
     k = 3
     result = classify(test, group, labels, k)
     print(result)
-    plt.scatter(group[:, 0:1], group[:, 1:2])
-    plt.scatter(x=test[0], y=test[1], c='red')
-    plt.title(u'散点图', color='red')
-    plt.show()
+    show_data(test, group)
