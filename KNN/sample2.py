@@ -264,4 +264,4 @@ def classify_person():
 
 
 if __name__ == '__main__':
-    classify_person()
+    file2matrix_test()
